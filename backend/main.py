@@ -176,7 +176,7 @@ def save_json_file(data: dict, filename: str) -> str:
 def compute_analytics(processed_emails: list) -> dict:
     """
     Computes detailed analytics including success/failure rates, category distributions,
-    and subscription amounts by service.
+    subscription amounts by service, and duplicate subscriptions.
     """
     logger.info("Computing analytics")
     total_emails = len(processed_emails)
@@ -186,6 +186,7 @@ def compute_analytics(processed_emails: list) -> dict:
     # Category and service analytics
     category_distribution = {}
     service_amounts = {}
+    subscription_occurrences = {}  # Track subscription occurrences
     
     for email in successful_extractions:
         sub_info = email["subscription_info"]
@@ -194,14 +195,18 @@ def compute_analytics(processed_emails: list) -> dict:
             category = sub_info.get("category", "unknown")
             category_distribution[category] = category_distribution.get(category, 0) + 1
             
-            # Update service amounts
+            # Update service amounts and track occurrences
             name = sub_info.get("name")
             amount = sub_info.get("amount")
-            if name and amount:
-                if name not in service_amounts:
-                    service_amounts[name] = {"total": 0, "count": 0}
-                service_amounts[name]["total"] += amount
-                service_amounts[name]["count"] += 1
+            if name:
+                # Track subscription occurrences
+                subscription_occurrences[name] = subscription_occurrences.get(name, 0) + 1
+                
+                if amount:
+                    if name not in service_amounts:
+                        service_amounts[name] = {"total": 0, "count": 0}
+                    service_amounts[name]["total"] += amount
+                    service_amounts[name]["count"] += 1
     
     # Calculate average amounts per service
     service_analytics = {
@@ -212,12 +217,22 @@ def compute_analytics(processed_emails: list) -> dict:
         for name, info in service_amounts.items()
     }
     
+    # Calculate duplicate subscriptions
+    duplicate_subscriptions = {
+        name: count for name, count in subscription_occurrences.items()
+        if count > 1
+    }
+    
     analytics = {
         "total_emails": total_emails,
         "successful_extractions": len(successful_extractions),
         "failed_extractions": len(failed_extractions),
         "category_distribution": category_distribution,
-        "service_analytics": service_analytics
+        "service_analytics": service_analytics,
+        "duplicate_subscriptions": {
+            "total_duplicates": len(duplicate_subscriptions),
+            "details": duplicate_subscriptions
+        }
     }
     
     # Save analytics to JSON file
