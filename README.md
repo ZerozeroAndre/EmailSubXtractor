@@ -58,91 +58,113 @@ EmailSubXtractor/
         │   └── EmailList.jsx
         └── services/
             └── api.js
+```
 
+## Prerequisites
 
-Prerequisites
-	•	Backend:
-	•	Python 3.x installed
-	•	pip
-	•	(Optional) Virtual environment tool (e.g., venv)
-	•	Frontend:
-	•	Node.js (v14+ recommended)
-	•	npm
-	•	General:
-	•	An OpenAI API key (for subscription extraction functionality)
+- **Backend:**
+  - Python 3.x installed
+  - pip
+  - (Optional) Virtual environment tool (e.g., venv)
+- **Frontend:**
+  - Node.js (v14+ recommended)
+  - npm
+- **General:**
+  - An OpenAI API key (for subscription extraction functionality)
 
-Setup and Installation
+## Setup and Installation
 
-1. Backend Setup
+### 1. Backend Setup
 
-a. Create and Activate a Virtual Environment
+#### a. Create and Activate a Virtual Environment
 
 Navigate to the project root and then the backend folder:
 
+```sh
 cd backend
 python3 -m venv env
 source env/bin/activate      # On Windows: .\env\Scripts\activate
+```
 
-b. Install Dependencies
+#### b. Install Dependencies
 
 Ensure you have a requirements.txt file in the backend folder with the following (versions can be adjusted):
+
+```
 fastapi
 uvicorn
 pydantic
 beautifulsoup4
 openai
 python-dotenv
+```
 
 Install the dependencies:
-pip install -r requirements.txt
 
-c. Configure Environment Variables
+```sh
+pip install -r requirements.txt
+```
+
+#### c. Configure Environment Variables
 
 Create a .env file in the backend folder with your API keys and configuration:
-OPENAI_API_KEY=your_openai_api_key_here
 
-d. Run the Backend Server
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+#### d. Run the Backend Server
 
 Start the FastAPI server with Uvicorn:
 
+```sh
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-The backend API will be available at http://localhost:8000.
+The backend API will be available at [http://localhost:8000](http://localhost:8000).
 
-2. Frontend Setup
+### 2. Frontend Setup
 
-a. Navigate to the Frontend Folder
+#### a. Navigate to the Frontend Folder
 
+```sh
 cd ../frontend
+```
 
-b. Install npm Dependencies
+#### b. Install npm Dependencies
 
+```sh
 npm install
+```
 
-d. Start the React Development Server
+#### c. Start the React Development Server
 
+```sh
 npm start
+```
 
-Your React app will open at http://localhost:3000.
+Your React app will open at [http://localhost:3000](http://localhost:3000).
 
-Usage
-	1.	Upload JSON File:
-On the frontend, use the provided file input to upload a JSON file containing a list of email objects (each object should include keys like subject, body, snippet, and from).
-	2.	Processing:
-The backend processes the file via the /process-emails endpoint. Each email is cleaned and processed, and GPT is used to extract subscription information.
-	3.	Analytics:
-The frontend fetches and displays analytics (via the /analytics endpoint) such as total emails processed, average email body length, and the number of emails with extracted subscription info.
-	4.	View Results:
-Processed emails, along with the extracted subscription details, are displayed on the frontend for review.
+## Usage
 
-Docker Deployment (Optional)
+1. **Upload JSON File:**
+   On the frontend, use the provided file input to upload a JSON file containing a list of email objects (each object should include keys like subject, body, snippet, and from).
+2. **Processing:**
+   The backend processes the file via the `/process-emails` endpoint. Each email is cleaned and processed, and GPT is used to extract subscription information.
+3. **Analytics:**
+   The frontend fetches and displays analytics (via the `/analytics` endpoint) such as total emails processed, average email body length, and the number of emails with extracted subscription info.
+4. **View Results:**
+   Processed emails, along with the extracted subscription details, are displayed on the frontend for review.
+
+## Docker Deployment (Optional)
 
 You can containerize the entire project using Docker and Docker Compose.
 
-a. Backend Dockerfile
+### a. Backend Dockerfile
 
 Create a Dockerfile in the backend folder:
 
+```Dockerfile
 FROM python:3.9-slim
 
 WORKDIR /app
@@ -153,11 +175,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+```
 
-b. Frontend Dockerfile
+### b. Frontend Dockerfile
 
 Create a Dockerfile in the frontend folder:
 
+```Dockerfile
 FROM node:16-alpine
 
 WORKDIR /app
@@ -169,11 +193,13 @@ COPY . .
 
 EXPOSE 3000
 CMD ["npm", "start"]
+```
 
-c. Docker Compose Configuration
+### c. Docker Compose Configuration
 
-In the project root, create a docker-compose.yml file:
+In the project root, create a `docker-compose.yml` file:
 
+```yaml
 version: "3.8"
 services:
   backend:
@@ -188,17 +214,21 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-
+```
 
 Start both services:
+
+```sh
 docker-compose up --build
+```
 
 The backend will be available on port 8000 and the frontend on port 3000.
 
-Troubleshooting
-	•	Backend Errors:
-Ensure your virtual environment is active and all required packages are installed.
-	•	Frontend Errors:
-Check that the API base URL in src/services/api.js is correct and that the backend server is running.
-	•	Environment Variables:
-Verify that your .env file is correctly set up and that python-dotenv is loading the variables.
+## Troubleshooting
+
+- **Backend Errors:**
+  Ensure your virtual environment is active and all required packages are installed.
+- **Frontend Errors:**
+  Check that the API base URL in `src/services/api.js` is correct and that the backend server is running.
+- **Environment Variables:**
+  Verify that your `.env` file is correctly set up and that `python-dotenv` is loading the variables.
