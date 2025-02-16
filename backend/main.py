@@ -23,10 +23,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Read the OpenAI API key from the environment variable
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-os.environ['OPENAI_API_KEY'] = OPENAI_API
-# Initialize the OpenAI client
-client = OpenAI()
+if not OPENAI_API_KEY:
+    raise ValueError("The OpenAI API key is not set. Please set the OPENAI_API_KEY environment variable.")
+
+# Initialize the OpenAI client with the API key
+client = OpenAI(api_key=OPENAI_API_KEY)
 logger.info("OpenAI client initialized")
 
 class EmailSubscriptionExtraction(BaseModel):
