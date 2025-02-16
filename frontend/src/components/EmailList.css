@@ -1,0 +1,74 @@
+/* src/components/EmailList.css */
+.email-list {
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.email-card {
+  border: none;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: #f9fafb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.email-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.email-subject {
+  font-weight: 600;
+  color: #007acc;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.subscription-info {
+  background: #eef2f7;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.subscription-info h4 {
+  margin: 0 0 10px 0;
+  color: #495057;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.info-item {
+  padding: 10px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.subscription-info pre {
+  background-color: #f1f5f9;
+  padding: 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+}

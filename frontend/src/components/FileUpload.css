@@ -1,0 +1,25 @@
+/* src/components/FileUpload.css */
+.file-upload {
+  margin-bottom: 30px;
+}
+
+.dropzone {
+  border: 2px dashed #007acc;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  background-color: #fff;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.dropzone.active {
+  background-color: #e6f7ff;
+  transform: scale(1.02);
+}
+
+.upload-status {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+  color: #007acc;
+}
