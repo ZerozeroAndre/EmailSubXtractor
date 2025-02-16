@@ -1,3 +1,4 @@
+// src/components/AnalyticsDashboard.jsx
 import React from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
@@ -30,10 +31,12 @@ const AnalyticsDashboard = ({ analytics }) => {
     successful_extractions, 
     failed_extractions,
     category_distribution,
-    service_analytics 
+    service_analytics,
+    duplicate_subscriptions_details,
+    deduplicated_subscriptions
   } = analytics;
 
-  // Prepare data for category distribution chart
+  // Prepare data for category distribution chart.
   const categoryChartData = {
     labels: Object.keys(category_distribution || {}),
     datasets: [{
@@ -49,7 +52,7 @@ const AnalyticsDashboard = ({ analytics }) => {
     }]
   };
 
-  // Prepare data for service amounts chart
+  // Prepare data for service amounts chart.
   const serviceNames = Object.keys(service_analytics || {});
   const averageAmounts = serviceNames.map(name => service_analytics[name].average_amount);
 
@@ -62,6 +65,19 @@ const AnalyticsDashboard = ({ analytics }) => {
     }]
   };
 
+  // Prepare data for duplicate subscriptions chart.
+  const duplicateLabels = Object.keys(duplicate_subscriptions_details || {});
+  const duplicateCounts = duplicateLabels.map(label => duplicate_subscriptions_details[label].count);
+
+  const duplicateChartData = {
+    labels: duplicateLabels,
+    datasets: [{
+      label: 'Duplicate Count',
+      data: duplicateCounts,
+      backgroundColor: '#FF6384'
+    }]
+  };
+
   const barOptions = {
     responsive: true,
     plugins: {
@@ -69,6 +85,17 @@ const AnalyticsDashboard = ({ analytics }) => {
       title: { 
         display: true,
         text: 'Average Subscription Amounts by Service'
+      }
+    }
+  };
+
+  const duplicateBarOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      title: { 
+        display: true,
+        text: 'Duplicate Subscriptions'
       }
     }
   };
@@ -102,6 +129,42 @@ const AnalyticsDashboard = ({ analytics }) => {
           <h3>Average Subscription Amounts</h3>
           <Bar options={barOptions} data={serviceChartData} />
         </div>
+
+        <div className="chart-box">
+          <h3>Duplicate Subscriptions</h3>
+          {duplicateLabels.length > 0 ? (
+            <Bar options={duplicateBarOptions} data={duplicateChartData} />
+          ) : (
+            <p>No duplicate subscriptions found.</p>
+          )}
+        </div>
+      </div>
+
+      {/* New Deduplicated Subscriptions Table */}
+      <div className="deduped-subscriptions">
+        <h3>Deduplicated Subscriptions</h3>
+        {deduplicated_subscriptions && Object.keys(deduplicated_subscriptions).length > 0 ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Subscription Name</th>
+                <th>Count</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(deduplicated_subscriptions).map(([name, info]) => (
+                <tr key={name}>
+                  <td>{name}</td>
+                  <td>{info.count}</td>
+                  <td>{info.subscription_info.category || 'unknown'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No subscriptions found.</p>
+        )}
       </div>
     </div>
   );

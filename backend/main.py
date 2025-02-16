@@ -163,6 +163,9 @@ def save_json_file(data: dict, filename: str) -> str:
     if not os.path.isabs(output_directory):
         output_directory = os.path.join(BACKEND_DIR, output_directory)
     
+    # Ensure the output directory is 'output'
+    output_directory = os.path.join(BACKEND_DIR, 'output')
+
     filepath = os.path.join(output_directory, filename)
     try:
         with open(filepath, 'w') as f:
@@ -176,7 +179,8 @@ def save_json_file(data: dict, filename: str) -> str:
 def compute_analytics(processed_emails: list) -> dict:
     """
     Computes detailed analytics including success/failure rates, category distributions,
-    subscription amounts by service, and duplicate subscriptions.
+    subscription amounts by service, duplicate subscriptions and deduplicated subscriptions.
+    Deduplicated subscriptions are grouped by the subscription name.
     """
     logger.info("Computing analytics")
     total_emails = len(processed_emails)
@@ -188,27 +192,40 @@ def compute_analytics(processed_emails: list) -> dict:
     service_amounts = {}
     subscription_occurrences = {}  # Track subscription occurrences
     
+    # Group subscriptions by name for deduplication.
+    deduplicated_subscriptions = {}
+    
     for email in successful_extractions:
         sub_info = email["subscription_info"]
         if sub_info:
-            # Update category distribution
+            # Update category distribution.
             category = sub_info.get("category", "unknown")
             category_distribution[category] = category_distribution.get(category, 0) + 1
             
-            # Update service amounts and track occurrences
+            # Update service amounts and track occurrences.
             name = sub_info.get("name")
             amount = sub_info.get("amount")
             if name:
-                # Track subscription occurrences
+                # Count occurrences.
                 subscription_occurrences[name] = subscription_occurrences.get(name, 0) + 1
-                
+
+                # For deduplication, group by subscription name.
+                if name not in deduplicated_subscriptions:
+                    deduplicated_subscriptions[name] = {
+                        "subscription_info": sub_info,
+                        "count": 1
+                    }
+                else:
+                    deduplicated_subscriptions[name]["count"] += 1
+
+                # Service amounts computation.
                 if amount:
                     if name not in service_amounts:
                         service_amounts[name] = {"total": 0, "count": 0}
                     service_amounts[name]["total"] += amount
                     service_amounts[name]["count"] += 1
-    
-    # Calculate average amounts per service
+
+    # Calculate average amounts per service.
     service_analytics = {
         name: {
             "average_amount": info["total"] / info["count"],
@@ -217,11 +234,27 @@ def compute_analytics(processed_emails: list) -> dict:
         for name, info in service_amounts.items()
     }
     
-    # Calculate duplicate subscriptions
+    # Calculate duplicate subscriptions (only those with more than one occurrence).
     duplicate_subscriptions = {
-        name: count for name, count in subscription_occurrences.items()
-        if count > 1
+        name: count for name, count in subscription_occurrences.items() if count > 1
     }
+    
+    duplicate_subscriptions_details = {}
+    for email in successful_extractions:
+        sub_info = email["subscription_info"]
+        if sub_info:
+            name = sub_info.get("name")
+            if name in duplicate_subscriptions:
+                if name not in duplicate_subscriptions_details:
+                    duplicate_subscriptions_details[name] = {
+                        "count": subscription_occurrences[name],
+                        "emails": []
+                    }
+                duplicate_subscriptions_details[name]["emails"].append({
+                    "subject": email.get("subject"),
+                    "body_length": email.get("body_length"),
+                    "category": sub_info.get("category")
+                })
     
     analytics = {
         "total_emails": total_emails,
@@ -232,10 +265,12 @@ def compute_analytics(processed_emails: list) -> dict:
         "duplicate_subscriptions": {
             "total_duplicates": len(duplicate_subscriptions),
             "details": duplicate_subscriptions
-        }
+        },
+        "duplicate_subscriptions_details": duplicate_subscriptions_details,
+        "deduplicated_subscriptions": deduplicated_subscriptions  # New grouping information.
     }
     
-    # Save analytics to JSON file
+    # Save analytics to JSON file.
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_filename = f"analytics_{timestamp}.json"
     
