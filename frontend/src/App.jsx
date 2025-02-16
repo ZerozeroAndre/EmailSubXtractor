@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
 import FileUpload from './components/FileUpload';
-import DirectorySelector from './components/DirectorySelector';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import EmailList from './components/EmailList';
 import Footer from './components/Footer';
@@ -14,7 +13,7 @@ function App() {
   const [analytics, setAnalytics] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
   const [outputFiles, setOutputFiles] = useState({ processed: null, analytics: null });
-  const [outputDirectory, setOutputDirectory] = useState("");
+  const [outputDirectory] = useState("/default/output/directory");
 
   const handleFileUpload = async (file) => {
     if (!file) return;
@@ -68,7 +67,6 @@ function App() {
     <div className="App">
       <Header title="Email Subscription Extractor" />
       <div className="container">
-        <DirectorySelector onDirectorySet={(dir) => setOutputDirectory(dir)} />
         <FileUpload onFileUpload={handleFileUpload} status={uploadStatus} />
         {outputFiles.processed && (
           <div className="output-files">
