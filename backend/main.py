@@ -307,33 +307,6 @@ output_directory = os.path.join(os.getcwd(), "output")  # Default output directo
 
 from config_util import set_output_directory_config
 
-@app.post("/set-output-directory")
-async def set_output_directory(directory: dict):
-    path = directory.get("path")
-    if not path:
-        raise HTTPException(status_code=400, detail="Directory path is required")
-    
-    try:
-        # This will validate, normalize and set the new directory
-        new_dir = set_output_directory_config(path)
-        
-        global output_directory
-        output_directory = new_dir
-        logger.info(f"Output directory set to: {output_directory}")
-        return {
-            "status": "success", 
-            "directory": output_directory,
-            "absolutePath": os.path.abspath(output_directory),
-            "exists": os.path.exists(output_directory),
-            "isWriteable": os.access(output_directory, os.W_OK)
-        }
-    except ValueError as e:
-        logger.error(f"Invalid directory: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error setting output directory: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to set output directory: {str(e)}")
-
 
 @app.post("/process-emails")
 async def process_emails_endpoint(file: UploadFile = File(...)):

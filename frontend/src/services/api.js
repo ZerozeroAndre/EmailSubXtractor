@@ -18,17 +18,3 @@ export const openDirectoryDialog = async () => {
     }
 };
 
-export const setOutputDirectory = async (path) => {
-    try {
-        const response = await axios.post(`${API_BASE_URL}/set-output-directory`, { 
-            path: path 
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.detail || error.message || 'Failed to set output directory';
-    }
-};
