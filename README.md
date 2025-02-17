@@ -207,7 +207,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - OPENAI_API_KEY=your_openai_api_key_here
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
   frontend:
     build: ./frontend
     ports:
@@ -223,6 +223,124 @@ docker-compose up --build
 ```
 
 The backend will be available on port 8000 and the frontend on port 3000.
+
+## Running the Project with Docker
+
+To run the entire project using Docker, follow these steps:
+
+1. **Ensure Docker is installed:**
+   Make sure Docker is installed and running on your machine. You can download Docker from [here](https://www.docker.com/products/docker-desktop).
+
+2. **Navigate to the project root:**
+   Open a terminal and navigate to the root directory of the project where the `docker-compose.yml` file is located.
+
+3. **Build and start the services:**
+   Run the following command to build and start the backend and frontend services:
+
+   ```sh
+   docker-compose up --build
+   ```
+
+   This command will build the Docker images for both the backend and frontend services and start the containers.
+
+4. **Access the services:**
+   - The backend API will be available at [http://localhost:8000](http://localhost:8000).
+   - The frontend React app will be available at [http://localhost:3000](http://localhost:3000).
+
+5. **Stop the services:**
+   To stop the running services, press `Ctrl+C` in the terminal where the `docker-compose` command is running. Alternatively, you can run the following command in a new terminal:
+
+   ```sh
+   docker-compose down
+   ```
+
+   This command will stop and remove the containers.
+
+## Running the Project without Docker
+
+To run the project without Docker, follow these steps:
+
+### 1. Backend Setup
+
+#### a. Create and Activate a Virtual Environment
+
+Navigate to the project root and then the backend folder:
+
+```sh
+cd backend
+python3 -m venv env
+source env/bin/activate      # On Windows: .\env\Scripts\activate
+```
+
+#### b. Install Dependencies
+
+Ensure you have a requirements.txt file in the backend folder with the following (versions can be adjusted):
+
+```
+fastapi
+uvicorn
+pydantic
+beautifulsoup4
+openai
+python-dotenv
+```
+
+Install the dependencies:
+
+```sh
+pip install -r requirements.txt
+```
+
+#### c. Configure Environment Variables
+
+Create a .env file in the backend folder with your API keys and configuration:
+
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+#### d. Run the Backend Server
+
+Start the FastAPI server with Uvicorn:
+
+```sh
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+The backend API will be available at [http://localhost:8000](http://localhost:8000).
+
+### 2. Frontend Setup
+
+#### a. Navigate to the Frontend Folder
+
+```sh
+cd ../frontend
+```
+
+#### b. Install npm Dependencies
+
+```sh
+npm install
+```
+
+#### c. Start the React Development Server
+
+```sh
+npm start
+```
+
+Your React app will open at [http://localhost:3000](http://localhost:3000).
+
+## Usage
+
+1. **Upload JSON File:**
+   On the frontend, use the provided file input to upload a JSON file containing a list of email objects (each object should include keys like subject, body, snippet, and from).
+2. **Processing:**
+   The backend processes the file via the `/process-emails` endpoint. Each email is cleaned and processed, and GPT is used to extract subscription information.
+3. **Analytics:**
+   The frontend fetches and displays analytics (via the `/analytics` endpoint) such as total emails processed, average email body length, and the number of emails with extracted subscription info.
+4. **View Results:**
+   Processed emails, along with the extracted subscription details, are displayed on the frontend for review.
 
 ## Troubleshooting
 
