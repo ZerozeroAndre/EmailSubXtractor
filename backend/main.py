@@ -292,7 +292,7 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React's default port
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Add both localhost and 127.0.0.1
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -305,7 +305,6 @@ processed_emails_storage = []
 
 output_directory = os.path.join(os.getcwd(), "output")  # Default output directory
 
-from config_util import set_output_directory_config
 
 
 @app.post("/process-emails")
