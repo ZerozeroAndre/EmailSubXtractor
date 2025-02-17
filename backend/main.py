@@ -334,22 +334,6 @@ async def set_output_directory(directory: dict):
         logger.error(f"Error setting output directory: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to set output directory: {str(e)}")
 
-@app.get("/current-directory")
-async def get_current_directory():
-    """Get the current output directory configuration"""
-    try:
-        current_dir = get_output_directory()
-        abs_path = os.path.abspath(current_dir)
-        return {
-            "directory": current_dir,
-            "absolutePath": abs_path,
-            "exists": os.path.exists(abs_path),
-            "isWriteable": os.access(abs_path, os.W_OK)
-        }
-    except Exception as e:
-        logger.error(f"Error getting current directory: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/process-emails")
 async def process_emails_endpoint(file: UploadFile = File(...)):
