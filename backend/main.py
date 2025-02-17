@@ -350,22 +350,6 @@ async def get_current_directory():
         logger.error(f"Error getting current directory: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/verify-directory/{path:path}")
-async def verify_directory(path: str):
-    """Verify if a directory path is valid and writable"""
-    try:
-        is_valid, error = validate_directory(path)
-        abs_path = os.path.abspath(path)
-        return {
-            "isValid": is_valid,
-            "error": error if not is_valid else "",
-            "absolutePath": abs_path,
-            "exists": os.path.exists(abs_path),
-            "isWriteable": os.access(abs_path, os.W_OK) if os.path.exists(abs_path) else False
-        }
-    except Exception as e:
-        logger.error(f"Error verifying directory: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/process-emails")
 async def process_emails_endpoint(file: UploadFile = File(...)):
