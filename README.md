@@ -224,6 +224,14 @@ docker-compose up --build
 
 The backend will be available on port 8000 and the frontend on port 3000.
 
+### d. Create a .env File
+
+Create a .env file in the root directory of your project with the OpenAI API key:
+
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
 ## Running the Project with Docker
 
 To run the entire project using Docker, follow these steps:
